@@ -29,9 +29,9 @@ public class AccountServiceImp implements AccountService {
   @Autowired
   AccountRepository accountRepository;
 
-
   @Autowired
   Validator validator;
+
 
   @Transactional
   @Override
@@ -100,7 +100,7 @@ public class AccountServiceImp implements AccountService {
 
   @Transactional
   @Override
-  public Account updateAccount(Account account, String amount,Boolean isFund) throws AccountException {
+  public Account updateAccount(Account account, String amount,Boolean isCredit) throws AccountException {
     log.info("trying to update account: {}", account);
 
     Optional<Account> accountOptional = accountRepository.findById(account.getAccountId());
@@ -114,13 +114,25 @@ public class AccountServiceImp implements AccountService {
        *The java.math.BigDecimal.negate() method returns a BigDecimal whose value is the negated value of the BigDecimal with which it is used.(50 ise -50 döndürür.)
        */
 
-        BigDecimal transactionAmount = (isFund) ? new BigDecimal(amount).abs() : new BigDecimal(amount).abs().negate();
+      /**
+       * If balanceStatus is Credit(CR),account with a credit balance will be increased by a credit operation(CR) and decreased by a debit operation(DR).
+       */
+      if(updatedAccount.getBalanceStatus().equals(BalanceStatus.CR)){
+          BigDecimal transactionAmount = (isCredit) ? new BigDecimal(amount).abs() : new BigDecimal(amount).abs().negate(); //Credit BalaceStatus Account: if credit operation,amount increase,if debit operation, amount decrease.
 
-        //checking that there is enough funds on wallet balance for transaction
-        Boolean condition = (isFund || (account.getBalance().compareTo(transactionAmount.abs()) >= 0) );
-        validator.isTrue(condition, String.format(ErrorMessage.NOT_ENOUGH_FUNDS,account.getAccountId(),amount), ErrorCode.BadRequest.getCode());
-        updatedAccount.setBalance(updatedAccount.getBalance().add(transactionAmount));
+          //checking that there is enough funds on account for transaction
+          check(account, amount, isCredit, updatedAccount, transactionAmount);
+      }
 
+      /**
+       * If balanceStatus is Debit(DR),account with a debit balance will be increased by a debit operation(DR) and decreased by a credit operation(CR).
+       */
+        else if(account.getBalanceStatus().equals(BalanceStatus.DR)){
+        BigDecimal transactionAmount = (isCredit) ? new BigDecimal(amount).abs().negate() : new BigDecimal(amount).abs();//Debit BalaceStatus Account: if credit operation,amount decrease,if debit operation,amount increase.
+
+        //checking that there is enough funds on account for transaction
+        check(account, amount, isCredit, updatedAccount, transactionAmount);
+      }
 
       return updatedAccount;
 
@@ -130,6 +142,14 @@ public class AccountServiceImp implements AccountService {
 
 
   }
+
+  private void check(Account account, String amount, Boolean isCredit, Account updatedAccount, BigDecimal transactionAmount)
+      throws AccountException {
+    Boolean condition = (isCredit || (account.getBalance().compareTo(transactionAmount.abs()) >= 0) );
+    validator.isTrue(condition, String.format(ErrorMessage.NOT_ENOUGH_FUNDS,account.getAccountId(),amount), ErrorCode.BadRequest.getCode());
+    updatedAccount.setBalance(updatedAccount.getBalance().add(transactionAmount));
+  }
+
   @Transactional
   @Override
   public void deleteAccountById(Long accountId) throws AccountException {

@@ -8,7 +8,7 @@ public class ErrorMessage {
   //Messages to display to user
   public static final String NO_CURRENCY_PRESENT = "No currency %s exists in the system.";
   public static final String MALFORMED_CURRENCY = "Field currency is invalid.";
-  public static final String NO_WALLET_FOUND = "No wallet with id %s exists in the system.";
+  public static final String NO_ACCOUNT_FOUND = "No account with id %s exists in the system.";
   public static final String ARGUMENT_TYPE_MISMATCH = "%s should be of type %s";
   public static final String NO_CURRENCY = "No field 'currency' provided";
   public static final String TRANSACTION_WITH_GLOBAL_ID_PRESENT = "Transaction with globalId=%s already present.";
@@ -21,18 +21,18 @@ public class ErrorMessage {
   //Template messages to compare
   public static final String DUPLICATE_KEY = "duplicate key value violates unique constraint \"transaction_global_id_key\"";
   public static final String CURRENCY_FK_VIOLATES_TRANSACTION = "violates foreign key constraint \"transaction_currency_id_fkey\"";
-  public static final String CURRENCY_FK_VIOLATES_WALLET = "violates foreign key constraint \"wallet_currency_id_fkey\"";
+  public static final String CURRENCY_FK_VIOLATES_ACCOUNT = "violates foreign key constraint \"wallet_currency_id_fkey\"";
   public static final String CURRENCY_TOO_LONG = "value too long";
   public static final String TYPE_FK_VIOLATES_TRANSACTION = "violates foreign key constraint \"transaction_type_id_fkey\"";
-  public static final String WALLET_FK_VIOLATES_TRANSACTION = "violates foreign key constraint \"transaction_wallet_id_fkey\"";
+  public static final String ACCOUNT_FK_VIOLATES_TRANSACTION = "violates foreign key constraint \"transaction_wallet_id_fkey\"";
 
   public static final String [][] ERRORS = {
       {DUPLICATE_KEY,                         TRANSACTION_WITH_GLOBAL_ID_PRESENT},
       {CURRENCY_FK_VIOLATES_TRANSACTION,      NO_CURRENCY_PRESENT },
-      {CURRENCY_FK_VIOLATES_WALLET,           NO_CURRENCY_PRESENT},
+      {CURRENCY_FK_VIOLATES_ACCOUNT,           NO_CURRENCY_PRESENT},
       {CURRENCY_TOO_LONG,                     MALFORMED_CURRENCY},
       {TYPE_FK_VIOLATES_TRANSACTION,          NO_TRANSACTION_TYPE_PRESENT},
-      {WALLET_FK_VIOLATES_TRANSACTION,        NO_WALLET_FOUND}
+      {ACCOUNT_FK_VIOLATES_TRANSACTION,        NO_ACCOUNT_FOUND}
   };
 
   /**

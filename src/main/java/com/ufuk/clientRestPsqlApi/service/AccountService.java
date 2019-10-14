@@ -19,7 +19,7 @@ public interface AccountService {
 
   Account saveAccount(Account account) throws AccountException; // create
 
-  Account updateAccount(Account account, String amount, Boolean isFund) throws AccountException; // update
+  Account updateAccount(Account account, String amount, Boolean isCredit) throws AccountException; // update
 
   void deleteAccountById(Long accountId) throws AccountException; // delete
 
