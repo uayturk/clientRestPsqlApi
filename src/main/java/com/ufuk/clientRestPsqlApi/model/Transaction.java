@@ -1,9 +1,12 @@
 package com.ufuk.clientRestPsqlApi.model;
 
 
+import java.math.BigDecimal;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -28,6 +31,14 @@ public class Transaction {
   @Column(name="transactionId",updatable=false,nullable=false)
   private Long transactionId;
 
+  /*@ManyToOne(cascade= CascadeType.ALL)
+  @JoinColumn(name = "transactionTypeId", nullable = false)*/
+  @NotNull
+  /*@OnDelete(action = OnDeleteAction.CASCADE)*/
+  @Column(name = "TransactionType")
+  @Enumerated(EnumType.STRING)
+  private TransactionType type;
+
   @ManyToOne(cascade= CascadeType.ALL)
   @JoinColumn(name = "debitAccountId", nullable = false)
   @NotNull
@@ -40,9 +51,8 @@ public class Transaction {
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Account creditAccount;
 
-  @NotNull
   @Column(name="amount")
-  private String amount;
+  private BigDecimal amount;
 
   @NotNull
   @Column(name="message")
@@ -52,4 +62,10 @@ public class Transaction {
   @Column(name="date_created")
   private String dateCreated;
 
+  public Transaction(TransactionType transactionType, Account debitAccount,Account creditAccount, BigDecimal amount) {
+    this.type = transactionType;
+    this.debitAccount=debitAccount;
+    this.creditAccount=creditAccount;
+    this.amount=amount;
+  }
 }

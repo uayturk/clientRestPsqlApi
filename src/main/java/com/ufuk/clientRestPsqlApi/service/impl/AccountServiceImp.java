@@ -50,15 +50,21 @@ public class AccountServiceImp implements AccountService {
   }
   @Transactional
   @Override
-  public Account getAccountById(Long accountId) throws AccountException {
+  public Account getAccountById(Long accountId,BalanceStatus balanceStatus) throws AccountException {
     log.info("trying to find account for accountId: {}", accountId);
 
     Optional<Account> clientOptional = accountRepository.findById(accountId);
 
-    if(clientOptional.isPresent()) {
+    if(clientOptional.isPresent() && (balanceStatus == null)) {
       log.info("successfully found account for accountId: {}", accountId);
       return clientOptional.get();
-    } else {
+    }else if(clientOptional.isPresent() && (balanceStatus.equals(BalanceStatus.CR))) {
+      log.info("successfully found credit account for accountId: {}", accountId);
+      return clientOptional.get();
+    }else if(clientOptional.isPresent() && (balanceStatus.equals(BalanceStatus.DR))) {
+      log.info("successfully found debit account for accountId: {}", accountId);
+      return clientOptional.get();
+    }else {
       throw new AccountException("No account record exist for given id");
     }
   }
@@ -100,7 +106,7 @@ public class AccountServiceImp implements AccountService {
 
   @Transactional
   @Override
-  public Account updateAccount(Account account, String amount,Boolean isCredit) throws AccountException {
+  public Account updateAccount(Account account, String amount,Boolean isCredit,BalanceStatus balanceStatus) throws AccountException {
     log.info("trying to update account: {}", account);
 
     Optional<Account> accountOptional = accountRepository.findById(account.getAccountId());
@@ -117,7 +123,8 @@ public class AccountServiceImp implements AccountService {
       /**
        * If balanceStatus is Credit(CR),account with a credit balance will be increased by a credit operation(CR) and decreased by a debit operation(DR).
        */
-      if(updatedAccount.getBalanceStatus().equals(BalanceStatus.CR)){
+      if(balanceStatus.equals(BalanceStatus.CR)){
+          log.info("Credit(CR) Balace Status  account.");
           BigDecimal transactionAmount = (isCredit) ? new BigDecimal(amount).abs() : new BigDecimal(amount).abs().negate(); //Credit BalaceStatus Account: if credit operation,amount increase,if debit operation, amount decrease.
 
           //checking that there is enough funds on account for transaction
@@ -127,7 +134,8 @@ public class AccountServiceImp implements AccountService {
       /**
        * If balanceStatus is Debit(DR),account with a debit balance will be increased by a debit operation(DR) and decreased by a credit operation(CR).
        */
-        else if(account.getBalanceStatus().equals(BalanceStatus.DR)){
+        else if(balanceStatus.equals(BalanceStatus.DR)){
+        log.info("Debit(DR) Balace Status  account.");
         BigDecimal transactionAmount = (isCredit) ? new BigDecimal(amount).abs().negate() : new BigDecimal(amount).abs();//Debit BalaceStatus Account: if credit operation,amount decrease,if debit operation,amount increase.
 
         //checking that there is enough funds on account for transaction
@@ -141,13 +149,6 @@ public class AccountServiceImp implements AccountService {
     }
 
 
-  }
-
-  private void check(Account account, String amount, Boolean isCredit, Account updatedAccount, BigDecimal transactionAmount)
-      throws AccountException {
-    Boolean condition = (isCredit || (account.getBalance().compareTo(transactionAmount.abs()) >= 0) );
-    validator.isTrue(condition, String.format(ErrorMessage.NOT_ENOUGH_FUNDS,account.getAccountId(),amount), ErrorCode.BadRequest.getCode());
-    updatedAccount.setBalance(updatedAccount.getBalance().add(transactionAmount));
   }
 
   @Transactional
@@ -165,6 +166,13 @@ public class AccountServiceImp implements AccountService {
       throw new AccountException("No account exist for given id");
     }
 
+  }
+
+  private void check(Account account, String amount, Boolean isCredit, Account updatedAccount, BigDecimal transactionAmount)
+      throws AccountException {
+    Boolean condition = (isCredit || (account.getBalance().compareTo(transactionAmount.abs()) >= 0) );
+    validator.isTrue(condition, String.format(ErrorMessage.NOT_ENOUGH_FUNDS,account.getAccountId(),amount), ErrorCode.BadRequest.getCode());
+    updatedAccount.setBalance(updatedAccount.getBalance().add(transactionAmount));
   }
 
 

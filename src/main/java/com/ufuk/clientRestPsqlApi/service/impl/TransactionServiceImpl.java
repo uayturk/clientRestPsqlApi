@@ -2,11 +2,18 @@ package com.ufuk.clientRestPsqlApi.service.impl;
 
 
 import com.ufuk.clientRestPsqlApi.exception.AccountException;
+import com.ufuk.clientRestPsqlApi.exception.ErrorCode;
+import com.ufuk.clientRestPsqlApi.exception.ErrorMessage;
+import com.ufuk.clientRestPsqlApi.model.Account;
+import com.ufuk.clientRestPsqlApi.model.BalanceStatus;
 import com.ufuk.clientRestPsqlApi.model.Transaction;
 import com.ufuk.clientRestPsqlApi.model.TransactionType;
 import com.ufuk.clientRestPsqlApi.repository.TransactionRepository;
+import com.ufuk.clientRestPsqlApi.repository.TransactionTypeRepository;
+import com.ufuk.clientRestPsqlApi.service.AccountService;
 import com.ufuk.clientRestPsqlApi.service.TransactionService;
 import com.ufuk.clientRestPsqlApi.validator.Validator;
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +27,12 @@ public class TransactionServiceImpl implements TransactionService {
 
   @Autowired
   TransactionRepository transactionRepository;
+
+  @Autowired
+  TransactionTypeRepository transactionTypeRepository;
+
+  @Autowired
+  AccountService accountService;
 
   @Autowired
   Validator validator;
@@ -44,8 +57,56 @@ public class TransactionServiceImpl implements TransactionService {
     }
   }
 
+
+  /**
+   * Creating transaction for account.
+   * If there is not enough balace on account,throws AccountException.
+   *  An account with a debit balance will be increased by a debit operation and decreased by a credit operation.
+   *  Conversely an account with a credit balance will be increased by a credit operation and decreased by a debit operation.
+   * @param accountId valid accountId
+   * @param transactionTypeId valid transaction type - 'CR' or 'DR'
+   * @param amount
+   * @return
+   * @throws AccountException
+   */
   @Override
-  public Transaction createTransaction(Long accountId, TransactionType transactionTypeId, Transaction amount) throws AccountException {
-    return null;
+  public Transaction saveTransaction(Long accountId,String amount ,TransactionType transactionTypeId,BalanceStatus balanceStatus) throws AccountException {
+
+    //Getting transactionType reference
+    TransactionType transactionType = transactionTypeRepository.getOne(transactionTypeId);
+
+    Account creditAccount = null;
+    Account debitAccount = null;
+
+    //Checking account is present or not.
+    if(balanceStatus.equals(BalanceStatus.DR)){
+      log.info("Debit(DR) Balace Status account transaction side.");
+      debitAccount = accountService.getAccountById(accountId,BalanceStatus.DR);
+      String error = String.format(ErrorMessage.NO_ACCOUNT_FOUND);
+      validator.isTrue(debitAccount != null,error, ErrorCode.BadRequest.getCode());
+
+      //We are giving default CR (Credit operation)
+      debitAccount = accountService.updateAccount(debitAccount,amount,transactionTypeId.equals(TransactionType.CR),BalanceStatus.DR);
+
+
+    }else if(balanceStatus.equals(BalanceStatus.CR)){
+      log.info("Credit(CR) Balace Status  account transaction side.");
+      creditAccount = accountService.getAccountById(accountId,BalanceStatus.CR);
+      String error = String.format(ErrorMessage.NO_ACCOUNT_FOUND);
+      validator.isTrue(creditAccount != null,error, ErrorCode.BadRequest.getCode());
+
+      //We are giving default CR (Credit operation)
+      creditAccount = accountService.updateAccount(creditAccount,amount,transactionTypeId.equals(TransactionType.CR),BalanceStatus.CR);
+
+    }else{
+      throw new AccountException("No debit/credit account record found.");
+    }
+
+    //Creating transaction for credit accounts
+    Transaction transaction = new Transaction(transactionType,debitAccount,creditAccount,new BigDecimal(amount));
+
+    return transactionRepository.save(transaction);
+
+
   }
 }

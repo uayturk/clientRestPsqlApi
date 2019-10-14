@@ -3,6 +3,7 @@ package com.ufuk.clientRestPsqlApi.controller;
 
 import com.ufuk.clientRestPsqlApi.exception.AccountException;
 import com.ufuk.clientRestPsqlApi.model.Account;
+import com.ufuk.clientRestPsqlApi.model.BalanceStatus;
 import com.ufuk.clientRestPsqlApi.model.Client;
 import com.ufuk.clientRestPsqlApi.service.AccountService;
 import io.swagger.annotations.ApiOperation;
@@ -42,8 +43,8 @@ public class AccountController {
   @ApiOperation(value = "Necessary doc is the below for getAccountById.\n",
       notes = "getAccountById is gets accounts from PostgresqlDB.\n "
   )
-  public Account getAccountById(@PathVariable("accountId") Long accountId) throws IOException, JSONException, AccountException {
-    return accountService.getAccountById(accountId);
+  public Account getAccountById(@PathVariable("accountId") Long accountId,@RequestParam(required = false)BalanceStatus balanceStatus) throws IOException, JSONException, AccountException {
+    return accountService.getAccountById(accountId,balanceStatus);
   }
 
   /**
@@ -75,8 +76,8 @@ public class AccountController {
   @ApiOperation(value = "Necessary doc is the below for updateAccount.\n",
       notes = "updateAccount is updates accounts on PostgresqlDB.\n "
   )
-  public Account updateAccount(@RequestBody(required = false) Account account,@RequestParam String amount,@RequestParam Boolean isFund) throws IOException, JSONException, AccountException {
-    return accountService.updateAccount(account,amount,isFund);
+  public Account updateAccount(@RequestBody(required = false) Account account,@RequestParam String amount,@RequestParam Boolean isCredit,@RequestParam BalanceStatus balanceStatus) throws IOException, JSONException, AccountException {
+    return accountService.updateAccount(account,amount,isCredit,balanceStatus);
   }
 
 

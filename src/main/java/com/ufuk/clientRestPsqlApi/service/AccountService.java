@@ -13,13 +13,13 @@ public interface AccountService {
 
   Set<Account> getAllAccounts(Integer size);
 
-  Account getAccountById(Long accountId) throws AccountException; // read (according to accountId)
+  Account getAccountById(Long accountId,BalanceStatus balanceStatus) throws AccountException; // read (according to accountId)
 
   Account getAccountByClientId(Long clientId) throws AccountException; // read (according to clientId)
 
   Account saveAccount(Account account) throws AccountException; // create
 
-  Account updateAccount(Account account, String amount, Boolean isCredit) throws AccountException; // update
+  Account updateAccount(Account account, String amount, Boolean isCredit,BalanceStatus balanceStatus) throws AccountException; // update
 
   void deleteAccountById(Long accountId) throws AccountException; // delete
 
