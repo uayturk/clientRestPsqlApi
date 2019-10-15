@@ -76,7 +76,7 @@ public class AccountController {
   @ApiOperation(value = "Necessary doc is the below for updateAccount.\n",
       notes = "updateAccount is updates accounts on PostgresqlDB.\n "
   )
-  public Account updateAccount(@RequestBody(required = false) Account account,@RequestParam String amount,@RequestParam Boolean isCredit) throws IOException, JSONException, AccountException {
+  public Account updateAccount(@RequestBody(required = false) Account account,@RequestParam String amount,@RequestParam(required = false) Boolean isCredit) throws IOException, JSONException, AccountException {
     return accountService.updateAccount(account,amount,isCredit);
   }
 
