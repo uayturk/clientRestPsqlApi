@@ -31,12 +31,10 @@ public class Transaction {
   @Column(name="transactionId",updatable=false,nullable=false)
   private Long transactionId;
 
-  /*@ManyToOne(cascade= CascadeType.ALL)
-  @JoinColumn(name = "transactionTypeId", nullable = false)*/
+  @ManyToOne(cascade= CascadeType.ALL)
+  @JoinColumn(name = "typeId", nullable = false)
   @NotNull
-  /*@OnDelete(action = OnDeleteAction.CASCADE)*/
-  @Column(name = "TransactionType")
-  @Enumerated(EnumType.STRING)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private TransactionType type;
 
   @ManyToOne(cascade= CascadeType.ALL)

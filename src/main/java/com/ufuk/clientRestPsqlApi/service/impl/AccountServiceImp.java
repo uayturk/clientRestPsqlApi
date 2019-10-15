@@ -106,7 +106,7 @@ public class AccountServiceImp implements AccountService {
 
   @Transactional
   @Override
-  public Account updateAccount(Account account, String amount,Boolean isCredit,BalanceStatus balanceStatus) throws AccountException {
+  public Account updateAccount(Account account, String amount,Boolean isCredit) throws AccountException {
     log.info("trying to update account: {}", account);
 
     Optional<Account> accountOptional = accountRepository.findById(account.getAccountId());
@@ -123,7 +123,7 @@ public class AccountServiceImp implements AccountService {
       /**
        * If balanceStatus is Credit(CR),account with a credit balance will be increased by a credit operation(CR) and decreased by a debit operation(DR).
        */
-      if(balanceStatus.equals(BalanceStatus.CR)){
+      if(updatedAccount.getBalanceStatus().equals(BalanceStatus.CR)){
           log.info("Credit(CR) Balace Status  account.");
           BigDecimal transactionAmount = (isCredit) ? new BigDecimal(amount).abs() : new BigDecimal(amount).abs().negate(); //Credit BalaceStatus Account: if credit operation,amount increase,if debit operation, amount decrease.
 
@@ -134,7 +134,7 @@ public class AccountServiceImp implements AccountService {
       /**
        * If balanceStatus is Debit(DR),account with a debit balance will be increased by a debit operation(DR) and decreased by a credit operation(CR).
        */
-        else if(balanceStatus.equals(BalanceStatus.DR)){
+        else if(updatedAccount.getBalanceStatus().equals(BalanceStatus.DR)){
         log.info("Debit(DR) Balace Status  account.");
         BigDecimal transactionAmount = (isCredit) ? new BigDecimal(amount).abs().negate() : new BigDecimal(amount).abs();//Debit BalaceStatus Account: if credit operation,amount decrease,if debit operation,amount increase.
 

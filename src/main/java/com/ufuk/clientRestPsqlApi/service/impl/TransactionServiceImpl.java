@@ -16,8 +16,11 @@ import com.ufuk.clientRestPsqlApi.validator.Validator;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +40,10 @@ public class TransactionServiceImpl implements TransactionService {
   @Autowired
   Validator validator;
 
+  @Value("CR")
+  @Getter
+  @Setter
+  private String transactionTypeCredit;
 
   @Transactional
   @Override
@@ -70,7 +77,7 @@ public class TransactionServiceImpl implements TransactionService {
    * @throws AccountException
    */
   @Override
-  public Transaction saveTransaction(Long accountId,String amount ,TransactionType transactionTypeId,BalanceStatus balanceStatus) throws AccountException {
+  public Transaction saveTransaction(Long accountId,String amount ,String transactionTypeId,BalanceStatus balanceStatus) throws AccountException {
 
     //Getting transactionType reference
     TransactionType transactionType = transactionTypeRepository.getOne(transactionTypeId);
@@ -86,7 +93,7 @@ public class TransactionServiceImpl implements TransactionService {
       validator.isTrue(debitAccount != null,error, ErrorCode.BadRequest.getCode());
 
       //We are giving default CR (Credit operation)
-      debitAccount = accountService.updateAccount(debitAccount,amount,transactionTypeId.equals(TransactionType.CR),BalanceStatus.DR);
+      debitAccount = accountService.updateAccount(debitAccount,amount,transactionTypeId.equalsIgnoreCase(transactionTypeCredit));
 
 
     }else if(balanceStatus.equals(BalanceStatus.CR)){
@@ -96,7 +103,7 @@ public class TransactionServiceImpl implements TransactionService {
       validator.isTrue(creditAccount != null,error, ErrorCode.BadRequest.getCode());
 
       //We are giving default CR (Credit operation)
-      creditAccount = accountService.updateAccount(creditAccount,amount,transactionTypeId.equals(TransactionType.CR),BalanceStatus.CR);
+      creditAccount = accountService.updateAccount(creditAccount,amount,transactionTypeId.equalsIgnoreCase(transactionTypeCredit));
 
     }else{
       throw new AccountException("No debit/credit account record found.");
