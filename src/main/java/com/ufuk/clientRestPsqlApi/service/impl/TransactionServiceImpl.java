@@ -16,6 +16,7 @@ import com.ufuk.clientRestPsqlApi.validator.Validator;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.Set;
+import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -77,7 +78,9 @@ public class TransactionServiceImpl implements TransactionService {
    * @throws AccountException
    */
   @Override
-  public Transaction saveTransaction(Long accountId,String amount ,String transactionTypeId,BalanceStatus balanceStatus) throws AccountException {
+  public Transaction saveTransaction(Long accountId,String amount ,@NotBlank String transactionTypeId,BalanceStatus balanceStatus) throws AccountException {
+    log.info("aaaaaaaaaaaaaaa:{}",transactionTypeId);
+    log.info("DDDDDDDDDDDDDDDDDDDDDDDDd:{}",transactionTypeRepository.getOne(transactionTypeId));
 
     //Getting transactionType reference
     TransactionType transactionType = transactionTypeRepository.getOne(transactionTypeId);

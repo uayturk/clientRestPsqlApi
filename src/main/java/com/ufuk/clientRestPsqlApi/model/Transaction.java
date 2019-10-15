@@ -61,6 +61,7 @@ public class Transaction {
   private String dateCreated;
 
   public Transaction(TransactionType transactionType, Account debitAccount,Account creditAccount, BigDecimal amount) {
+
     this.type = transactionType;
     this.debitAccount=debitAccount;
     this.creditAccount=creditAccount;
