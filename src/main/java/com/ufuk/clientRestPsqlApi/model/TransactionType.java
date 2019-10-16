@@ -13,13 +13,14 @@ import lombok.Setter;
 import lombok.ToString;
 
 /*@Entity
-@Table(name="TBL_TRANSACTIONTYPE")
+@Table(name="TBL_TRANSACTIONTYPE")*/
 @Getter
 public enum TransactionType {
   DR,
   CR
-}*/
+}
 
+/*
 @Getter
 @Setter
 @ToString
@@ -35,3 +36,4 @@ public class TransactionType{
   @Temporal(TemporalType.TIMESTAMP)
   private Date lastUpdatedDate;
 }
+*/

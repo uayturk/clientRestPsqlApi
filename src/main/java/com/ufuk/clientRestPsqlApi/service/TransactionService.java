@@ -11,5 +11,5 @@ import java.util.Set;
 public interface TransactionService {
 
   Transaction getTransactionsByAccountId(Long accountId) throws AccountException;
-  Transaction saveTransaction(Long accountId,String amount,String transactionTypeId, BalanceStatus balanceStatus) throws AccountException;
+  Transaction saveTransaction(Long debitAccountId,Long creditAccountId,String amount,TransactionType transactionTypeId,String message) throws AccountException;
 }

@@ -43,8 +43,8 @@ public class AccountController {
   @ApiOperation(value = "Necessary doc is the below for getAccountById.\n",
       notes = "getAccountById is gets accounts from PostgresqlDB.\n "
   )
-  public Account getAccountById(@PathVariable("accountId") Long accountId,@RequestParam(required = false)BalanceStatus balanceStatus) throws IOException, JSONException, AccountException {
-    return accountService.getAccountById(accountId,balanceStatus);
+  public Account getAccountById(@PathVariable("accountId") Long accountId) throws IOException, JSONException, AccountException {
+    return accountService.getAccountById(accountId);
   }
 
   /**

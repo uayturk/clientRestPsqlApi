@@ -94,14 +94,7 @@ public class ClientServiceImpl implements ClientService {
       return client;
     }
 
-
-
   }
-
-  /*@Override
-  public Client updateClient(Client client) throws RecordNotFoundException {
-
-  }*/
 
   @Override
   public void deleteClientById(Long clientId) throws RecordNotFoundException {
@@ -117,32 +110,6 @@ public class ClientServiceImpl implements ClientService {
       throw new RecordNotFoundException("No employee record exist for given id");
     }
   }
-
-  /*public static void main(String[] args) {
-
-    String[] thisIsAStringArray = {"AAA", "BBB", "CCC", "DDD", "EE"};
-
-   *//* ArrayList<String> ar = new ArrayList<String>();
-    String s1 ="Test1";
-    String s2 ="Test2";
-    String s3 ="Test3";
-    ar.add(s1);
-    ar.add(s2);
-    ar.add(s3);
-    *//*
-    // creating a Stream of strings
-   *//* Stream<String> s = Stream.of("Geeks",
-        "for",
-        "GeeksforGeeks",
-        "Geeks Classes");*//*
-
-    // using Collectors toSet() function
-    Set<String> mySet = Arrays.stream(thisIsAStringArray).collect(Collectors.toSet());
-
-    // printing the elements
-    System.out.println(mySet);
-
-  }*/
 
 
 }

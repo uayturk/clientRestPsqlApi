@@ -3,6 +3,7 @@ package com.ufuk.clientRestPsqlApi.controller;
 import com.ufuk.clientRestPsqlApi.exception.AccountException;
 import com.ufuk.clientRestPsqlApi.model.BalanceStatus;
 import com.ufuk.clientRestPsqlApi.model.Transaction;
+import com.ufuk.clientRestPsqlApi.model.TransactionType;
 import com.ufuk.clientRestPsqlApi.service.TransactionService;
 import io.swagger.annotations.ApiOperation;
 import java.io.IOException;
@@ -37,8 +38,8 @@ public class TransactionController {
   @ApiOperation(value = "Necessary doc is the below for saveTransaction.\n",
       notes = "saveTransaction is saves transactions to PostgresqlDB.\n "
   )
-  public Transaction saveTransaction(Long accountId,@RequestParam String amount,@RequestParam String transactionTypeId,@RequestParam BalanceStatus balanceStatus) throws IOException, JSONException, AccountException {
-    return transactionService.saveTransaction(accountId,amount,transactionTypeId,balanceStatus);
+  public Transaction saveTransaction(Long debitAccountId,Long creditAccountId,@RequestParam String amount,@RequestParam TransactionType transactionTypeId,@RequestParam String message) throws IOException, JSONException, AccountException {
+    return transactionService.saveTransaction(debitAccountId,creditAccountId,amount,transactionTypeId,message);
   }
 
 }

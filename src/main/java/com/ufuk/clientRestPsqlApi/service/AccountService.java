@@ -13,7 +13,7 @@ public interface AccountService {
 
   Set<Account> getAllAccounts(Integer size);
 
-  Account getAccountById(Long accountId,BalanceStatus balanceStatus) throws AccountException; // read (according to accountId)
+  Account getAccountById(Long accountId) throws AccountException; // read (according to accountId)
 
   Account getAccountByClientId(Long clientId) throws AccountException; // read (according to clientId)
 

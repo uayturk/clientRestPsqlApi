@@ -2,6 +2,7 @@ package com.ufuk.clientRestPsqlApi.model;
 
 
 import java.math.BigDecimal;
+import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,10 +32,8 @@ public class Transaction {
   @Column(name="transactionId",updatable=false,nullable=false)
   private Long transactionId;
 
-  @ManyToOne(cascade= CascadeType.ALL)
-  @JoinColumn(name = "typeId", nullable = false)
   @NotNull
-  @OnDelete(action = OnDeleteAction.CASCADE)
+  @Column(name="transaction_type")
   private TransactionType type;
 
   @ManyToOne(cascade= CascadeType.ALL)
@@ -58,13 +57,15 @@ public class Transaction {
 
   @NotNull
   @Column(name="date_created")
-  private String dateCreated;
+  private Date dateCreated;
 
-  public Transaction(TransactionType transactionType, Account debitAccount,Account creditAccount, BigDecimal amount) {
+  public Transaction(TransactionType transactionType, Account debitAccount,Account creditAccount, BigDecimal amount,String message) {
 
     this.type = transactionType;
     this.debitAccount=debitAccount;
     this.creditAccount=creditAccount;
     this.amount=amount;
+    this.message= message;
+    this.dateCreated = new Date();
   }
 }

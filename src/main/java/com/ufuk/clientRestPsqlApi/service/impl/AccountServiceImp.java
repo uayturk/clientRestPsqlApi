@@ -50,21 +50,16 @@ public class AccountServiceImp implements AccountService {
   }
   @Transactional
   @Override
-  public Account getAccountById(Long accountId,BalanceStatus balanceStatus) throws AccountException {
+  public Account getAccountById(Long accountId) throws AccountException {
     log.info("trying to find account for accountId: {}", accountId);
 
     Optional<Account> clientOptional = accountRepository.findById(accountId);
 
-    if(clientOptional.isPresent() && (balanceStatus == null)) {
+    if(clientOptional.isPresent()) {
       log.info("successfully found account for accountId: {}", accountId);
       return clientOptional.get();
-    }else if(clientOptional.isPresent() && (balanceStatus.equals(BalanceStatus.CR))) {
-      log.info("successfully found credit account for accountId: {}", accountId);
-      return clientOptional.get();
-    }else if(clientOptional.isPresent() && (balanceStatus.equals(BalanceStatus.DR))) {
-      log.info("successfully found debit account for accountId: {}", accountId);
-      return clientOptional.get();
-    }else {
+    }
+    else {
       throw new AccountException("No account record exist for given id");
     }
   }
@@ -122,6 +117,8 @@ public class AccountServiceImp implements AccountService {
 
       /**
        * If balanceStatus is Credit(CR),account with a credit balance will be increased by a credit operation(CR) and decreased by a debit operation(DR).
+       * value = 4347  value.negate()---> value is -4743
+       * value = -1234  value.ans()---> value is 1234
        */
       if(updatedAccount.getBalanceStatus().equals(BalanceStatus.CR)){
           log.info("Credit(CR) Balace Status  account.");
@@ -129,6 +126,11 @@ public class AccountServiceImp implements AccountService {
 
           //checking that there is enough funds on account for transaction
           check(account, amount, isCredit, updatedAccount, transactionAmount);
+          if(updatedAccount.getBalance().signum()<0){ //use signum() method Bigdecimal types.
+            updatedAccount.setBalanceStatus(BalanceStatus.DR); //Credit Status accounts can shift from CR to DR if balance gone positive.
+            updatedAccount.setBalance(updatedAccount.getBalance().negate()); //We should set negative balance to positive one. Moving to a negative balance changes CR situation to the DR,
+                                                                             //But balance must be still positive because same transactions will happens for changed situation DR.
+          }
       }
 
       /**
@@ -140,8 +142,13 @@ public class AccountServiceImp implements AccountService {
 
         //checking that there is enough funds on account for transaction
         check(account, amount, isCredit, updatedAccount, transactionAmount);
+        if(updatedAccount.getBalance().signum()<0){ //use signum() method Bigdecimal types.
+           updatedAccount.setBalanceStatus(BalanceStatus.CR); //Debit Statsu accounts can shift from DR to CR if balance gone negative.
+          updatedAccount.setBalance(updatedAccount.getBalance().negate()); //We should set negative balance to positive one. Moving to a negative balance changes DR situation to the CR,
+                                                                           //But balance must be still positive because same transactions will happens for changed situation CR.
+        }
       }
-
+      log.info("successfully updated account: {}",updatedAccount);
       return updatedAccount;
 
     }else{

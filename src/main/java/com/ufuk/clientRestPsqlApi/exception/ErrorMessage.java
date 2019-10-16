@@ -8,10 +8,10 @@ public class ErrorMessage {
   //Messages to display to user
   public static final String NO_CURRENCY_PRESENT = "No currency %s exists in the system.";
   public static final String MALFORMED_CURRENCY = "Field currency is invalid.";
-  public static final String NO_ACCOUNT_FOUND = "No account with id %s exists in the system.";
+  public static final String NO_ACCOUNT_FOUND = "No account record found for given accountId.";
   public static final String ARGUMENT_TYPE_MISMATCH = "%s should be of type %s";
   public static final String NO_CURRENCY = "No field 'currency' provided";
-  public static final String TRANSACTION_WITH_GLOBAL_ID_PRESENT = "Transaction with globalId=%s already present.";
+  //public static final String TRANSACTION_WITH_GLOBAL_ID_PRESENT = "Transaction with globalId=%s already present.";
   public static final String NO_TRANSACTION_TYPE_PRESENT = "Undefined transactionType %s.";
   public static final String NUMBER_FORMAT_MISMATCH = "'%s' should be a number";
   public static final String NOT_ENOUGH_FUNDS = "Wallet %d has not enough funds to perform debit transaction with amount %s";
@@ -27,7 +27,7 @@ public class ErrorMessage {
   public static final String ACCOUNT_FK_VIOLATES_TRANSACTION = "violates foreign key constraint \"transaction_wallet_id_fkey\"";
 
   public static final String [][] ERRORS = {
-      {DUPLICATE_KEY,                         TRANSACTION_WITH_GLOBAL_ID_PRESENT},
+      //{DUPLICATE_KEY,                         TRANSACTION_WITH_GLOBAL_ID_PRESENT},
       {CURRENCY_FK_VIOLATES_TRANSACTION,      NO_CURRENCY_PRESENT },
       {CURRENCY_FK_VIOLATES_ACCOUNT,           NO_CURRENCY_PRESENT},
       {CURRENCY_TOO_LONG,                     MALFORMED_CURRENCY},
