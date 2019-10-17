@@ -7,6 +7,8 @@ import com.ufuk.clientRestPsqlApi.model.TransactionType;
 import com.ufuk.clientRestPsqlApi.service.TransactionService;
 import io.swagger.annotations.ApiOperation;
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +31,7 @@ public class TransactionController {
   @ApiOperation(value = "Necessary doc is the below for getTransactionsByAccountId.\n",
       notes = "getTransactionsByAccountId is gets specific transaction from PostgresqlDB.\n "
   )
-  public Transaction getAllAccounts(@PathVariable("accountId") Long accountId) throws IOException, JSONException, AccountException {
+  public List<Transaction> getTransactionsByAccountId(@PathVariable("accountId") Long accountId) throws IOException, JSONException, AccountException {
     return transactionService.getTransactionsByAccountId(accountId);
   }
 

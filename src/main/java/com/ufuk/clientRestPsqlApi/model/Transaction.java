@@ -59,6 +59,8 @@ public class Transaction {
   @Column(name="date_created")
   private Date dateCreated;
 
+  public Transaction(){ }
+
   public Transaction(TransactionType transactionType, Account debitAccount,Account creditAccount, BigDecimal amount,String message) {
 
     this.type = transactionType;

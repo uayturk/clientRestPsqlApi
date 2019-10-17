@@ -14,6 +14,7 @@ import com.ufuk.clientRestPsqlApi.service.AccountService;
 import com.ufuk.clientRestPsqlApi.service.TransactionService;
 import com.ufuk.clientRestPsqlApi.validator.Validator;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import javax.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
@@ -39,18 +40,14 @@ public class TransactionServiceImpl implements TransactionService {
 
   @Transactional
   @Override
-  public Transaction getTransactionsByAccountId(Long accountId) throws AccountException {
+  public List<Transaction> getTransactionsByAccountId(Long accountId) throws AccountException {
     log.info("trying to find transaction for accountId: {}", accountId);
 
-    Optional<Transaction> transactionAccountOptionalDebit = transactionRepository.findByDebitAccount_AccountId(accountId);
-    Optional<Transaction> transactionAccountOptionalCredit = transactionRepository.findByCreditAccount_AccountId(accountId);
-
-    if(transactionAccountOptionalDebit.isPresent()) {
-      log.info("successfully found Debit account for accountId: {}", accountId);
-      return transactionAccountOptionalDebit.get();
-    } if(transactionAccountOptionalCredit.isPresent()){
-      log.info("successfully found Credit account for accountId: {}", accountId);
-      return transactionAccountOptionalCredit.get();
+    Account account = accountService.getAccountById(accountId);
+    if(account != null && account.getBalanceStatus().equals(BalanceStatus.CR)){
+      return transactionRepository.findByCreditAccount(account);
+    }else if(account != null && account.getBalanceStatus().equals(BalanceStatus.DR)){
+      return transactionRepository.findByDebitAccount(account);
     }else {
       throw new AccountException("No transaction record exist for given accountId");
     }
@@ -74,13 +71,14 @@ public class TransactionServiceImpl implements TransactionService {
   public Transaction saveTransaction(Long debitAccountId,Long creditAccountId,String amount ,@NotBlank TransactionType transactionTypeId,String message) throws AccountException {
     log.info("trying to transfer {} between {} and {} ",amount,debitAccountId,creditAccountId);
 
+    //TODO check given ID's really belong to the creditAccount or debitAccounts
     Account creditAccount = accountService.getAccountById(creditAccountId);
     if(!creditAccount.getBalanceStatus().equals(BalanceStatus.CR)){
       throw new AccountException("Given Id's account is not Credit(CR) Account! Please give correct Id.");
     }
     Account debitAccount = accountService.getAccountById(debitAccountId);
     if(!debitAccount.getBalanceStatus().equals(BalanceStatus.DR)){
-      throw new AccountException("Given Id's account is not Debit(CR) Account! Please give correct Id.");
+      throw new AccountException("Given Id's account is not Debit(DB) Account! Please give correct Id.");
     }
 
     try {

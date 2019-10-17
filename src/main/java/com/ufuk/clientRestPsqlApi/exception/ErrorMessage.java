@@ -5,33 +5,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ErrorMessage {
-  //Messages to display to user
-  public static final String NO_CURRENCY_PRESENT = "No currency %s exists in the system.";
-  public static final String MALFORMED_CURRENCY = "Field currency is invalid.";
+  //Simple messages for users
   public static final String NO_ACCOUNT_FOUND = "No account record found for given accountId.";
-  public static final String ARGUMENT_TYPE_MISMATCH = "%s should be of type %s";
-  public static final String NO_CURRENCY = "No field 'currency' provided";
-  //public static final String TRANSACTION_WITH_GLOBAL_ID_PRESENT = "Transaction with globalId=%s already present.";
-  public static final String NO_TRANSACTION_TYPE_PRESENT = "Undefined transactionType %s.";
-  public static final String NUMBER_FORMAT_MISMATCH = "'%s' should be a number";
-  public static final String NOT_ENOUGH_FUNDS = "Wallet %d has not enough funds to perform debit transaction with amount %s";
-  public static final String NO_MANDATORY_FIELD = "Field %s is mandatory. It should be provided and can't be empty.";
-  public static final String TRANSACTION_CURRENCY_NOT_EQ_WALLET_CURRENCY = "Transaction can't be saved. Transaction currency %s differs from wallet currency %s.";
+  public static final String NOT_ENOUGH_FUNDS = "Account %d has not enough funds to perform debit transaction with amount %s";
 
-  //Template messages to compare
-  public static final String DUPLICATE_KEY = "duplicate key value violates unique constraint \"transaction_global_id_key\"";
-  public static final String CURRENCY_FK_VIOLATES_TRANSACTION = "violates foreign key constraint \"transaction_currency_id_fkey\"";
-  public static final String CURRENCY_FK_VIOLATES_ACCOUNT = "violates foreign key constraint \"wallet_currency_id_fkey\"";
+  //Simple template messages for compare
   public static final String CURRENCY_TOO_LONG = "value too long";
-  public static final String TYPE_FK_VIOLATES_TRANSACTION = "violates foreign key constraint \"transaction_type_id_fkey\"";
   public static final String ACCOUNT_FK_VIOLATES_TRANSACTION = "violates foreign key constraint \"transaction_wallet_id_fkey\"";
 
   public static final String [][] ERRORS = {
       //{DUPLICATE_KEY,                         TRANSACTION_WITH_GLOBAL_ID_PRESENT},
-      {CURRENCY_FK_VIOLATES_TRANSACTION,      NO_CURRENCY_PRESENT },
-      {CURRENCY_FK_VIOLATES_ACCOUNT,           NO_CURRENCY_PRESENT},
-      {CURRENCY_TOO_LONG,                     MALFORMED_CURRENCY},
-      {TYPE_FK_VIOLATES_TRANSACTION,          NO_TRANSACTION_TYPE_PRESENT},
       {ACCOUNT_FK_VIOLATES_TRANSACTION,        NO_ACCOUNT_FOUND}
   };
 
