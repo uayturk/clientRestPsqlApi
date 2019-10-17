@@ -74,9 +74,14 @@ public class TransactionServiceImpl implements TransactionService {
   public Transaction saveTransaction(Long debitAccountId,Long creditAccountId,String amount ,@NotBlank TransactionType transactionTypeId,String message) throws AccountException {
     log.info("trying to transfer {} between {} and {} ",amount,debitAccountId,creditAccountId);
 
-    //TODO check given ID's really belong to the creditAccount or debitAccounts
     Account creditAccount = accountService.getAccountById(creditAccountId);
+    if(!creditAccount.getBalanceStatus().equals(BalanceStatus.CR)){
+      throw new AccountException("Given Id's account is not Credit(CR) Account! Please give correct Id.");
+    }
     Account debitAccount = accountService.getAccountById(debitAccountId);
+    if(!debitAccount.getBalanceStatus().equals(BalanceStatus.DR)){
+      throw new AccountException("Given Id's account is not Debit(CR) Account! Please give correct Id.");
+    }
 
     try {
       String error = String.format(ErrorMessage.NO_ACCOUNT_FOUND);
