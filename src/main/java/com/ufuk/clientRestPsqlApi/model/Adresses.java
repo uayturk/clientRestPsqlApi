@@ -10,7 +10,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -19,6 +21,8 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name="TBL_ADDRESSES")
+@AllArgsConstructor //allows multiple constructor (when set primary and secondary addresses in the tests gives constrc.error if you not use this annotation)
+@NoArgsConstructor
 public class Adresses {
 
  /* @ManyToOne

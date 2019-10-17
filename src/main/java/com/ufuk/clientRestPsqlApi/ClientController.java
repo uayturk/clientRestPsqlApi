@@ -1,4 +1,4 @@
-package com.ufuk.clientRestPsqlApi.controller;
+package com.ufuk.clientRestPsqlApi;
 
 
 import com.ufuk.clientRestPsqlApi.service.ClientService;

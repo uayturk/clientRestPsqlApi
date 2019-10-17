@@ -15,7 +15,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
@@ -26,6 +28,8 @@ import org.hibernate.annotations.OnDeleteAction;
 @ToString
 @Entity
 @Table(name="TBL_CLIENT")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Client {
 
   /*@ManyToOne
@@ -54,6 +58,7 @@ public class Client {
   @NotNull
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Adresses secondaryAddress;
+
 
   /*@OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
   private Set<Account> account;*/
