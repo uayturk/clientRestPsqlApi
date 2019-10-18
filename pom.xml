@@ -165,7 +165,35 @@
       <version>4.12</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>2.22.0</version>
+      <scope>test</scope>
+    </dependency>
     <!--Test dependencies ended-->
+
+    <!--Java 11 removed the Java EE modules: One of this is java.xml.bind (JAXB)
+        We need to use for test java.xml.bind (JAXB),so we are adding manually-->
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>2.3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-core</artifactId>
+      <version>2.3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-impl</artifactId>
+      <version>2.3.0</version>
+    </dependency>
+
+    <!--End of manual adding-->
+
 
 </dependencies>
 

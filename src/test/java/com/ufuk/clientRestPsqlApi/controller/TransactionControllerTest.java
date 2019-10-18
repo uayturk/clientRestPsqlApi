@@ -7,6 +7,12 @@ import com.ufuk.clientRestPsqlApi.model.Client;
 import com.ufuk.clientRestPsqlApi.model.Type;
 import com.ufuk.clientRestPsqlApi.service.AccountService;
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,9 +20,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@Slf4j
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc //Annotation that can be applied to a test class to enable and configure auto-configuration of MockMvc.
@@ -66,9 +84,37 @@ public class TransactionControllerTest {
 
   }
 
+  /**
+   * Some useful notes for BDDMockito(Behavior-Driven Development)
+   * The 'given' part entitles the test case setup. The assumptions, the preconditions, the requirements for this use case.
+   * The 'when' part is the action that you want to test. Normally, it’s also the smallest part of the test since the execution we want to test is typically one or two lines of code.
+   * The 'then' part is used to very what should happen after the execution of the action, which is represented usually by assertions to mocked classes and validation of returned results.
+   * @throws Exception
+   */
+
+
   @Test
   public void testGetAllAccounts_getAccount_thenReturnJson() throws Exception{
 
+    Set<Account> allAccounts = Stream.of(account).collect(Collectors.toSet()); //Creates Set<account>
+
+    given(accountService.getAllAccounts(40)).willReturn(allAccounts); //For Example just get 40 size account. It can be 50,60.70...
+
+    log.info("all accounts for test:{}",allAccounts);
+    log.info("FFFFFFFFFF:{}",account.getAccountId());
+
+    /**
+     * To test size of array: "jsonPath("$", hasSize(4))"  4 is just for example.
+     *
+     * To count members of object: "jsonPath("$.*", hasSize(4))"
+     *
+     * For the see response as string we can use : .andReturn().getResponse().getContentAsString()
+     */
+    log.info("response as string type:{}",mockMvc.perform(post("/getAllAccounts?size=40").contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse().getContentAsString());
+    mockMvc.perform(post("/getAllAccounts?size=40").contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$", hasSize(1)))
+        .andExpect(jsonPath("$[0].accountId",is(account.getAccountId().intValue())));
 
   }
 
