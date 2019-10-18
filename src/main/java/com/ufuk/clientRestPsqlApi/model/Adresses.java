@@ -22,7 +22,7 @@ import lombok.ToString;
 @Entity
 @Table(name="TBL_ADDRESSES")
 @AllArgsConstructor //allows multiple constructor (when set primary and secondary addresses in the tests gives constrc.error if you not use this annotation)
-@NoArgsConstructor
+@NoArgsConstructor  //and we should use this annotation with @AllArgsConstructor .
 public class Adresses {
 
  /* @ManyToOne

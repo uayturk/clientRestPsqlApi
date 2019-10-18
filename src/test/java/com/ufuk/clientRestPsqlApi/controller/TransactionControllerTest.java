@@ -2,9 +2,13 @@ package com.ufuk.clientRestPsqlApi.controller;
 
 import com.ufuk.clientRestPsqlApi.model.Account;
 import com.ufuk.clientRestPsqlApi.model.Adresses;
+import com.ufuk.clientRestPsqlApi.model.BalanceStatus;
 import com.ufuk.clientRestPsqlApi.model.Client;
+import com.ufuk.clientRestPsqlApi.model.Type;
 import com.ufuk.clientRestPsqlApi.service.AccountService;
+import java.math.BigDecimal;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -41,6 +45,7 @@ public class TransactionControllerTest {
   public static final Long ACCOUNT_ID = Long.valueOf("3");
 
 
+
   @Autowired
   private MockMvc mockMvc;
 
@@ -48,15 +53,22 @@ public class TransactionControllerTest {
   private AccountService accountService;
 
 
-  private Adresses addresses;
   private Client client;
   private Account account;
 
   @Before
   public void before() {
+
     client = new Client(CLIENT_ID, FIRST_NAME, LAST_NAME,
         new Adresses(P_ADDRESSES_ID, P_ADDRESS_LINE1, P_ADDRESS_LINE2, P_CITY, P_COUNTRY),
         new Adresses(S_ADDRESSES_ID, S_ADDRESS_LINE1, S_ADDRESS_LINE2, S_CITY, S_COUNTRY));
+    account = new Account(ACCOUNT_ID, BalanceStatus.CR, Type.CURRENT, new BigDecimal(1000),client);
+
+  }
+
+  @Test
+  public void testGetAllAccounts_getAccount_thenReturnJson() throws Exception{
+
 
   }
 
