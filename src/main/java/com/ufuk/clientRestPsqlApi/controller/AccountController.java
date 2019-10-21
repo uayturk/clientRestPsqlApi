@@ -65,7 +65,7 @@ public class AccountController {
   @ApiOperation(value = "Necessary doc is the below for saveAccount.\n",
       notes = "saveAccount is saves accounts to PostgresqlDB.\n "
   )
-  public Account saveAccount(@RequestBody(required = false) Account account) throws IOException, JSONException, AccountException {
+  public Account saveAccount(@RequestBody(required = true) Account account) throws IOException, JSONException, AccountException {
     return accountService.saveAccount(account);
   }
 

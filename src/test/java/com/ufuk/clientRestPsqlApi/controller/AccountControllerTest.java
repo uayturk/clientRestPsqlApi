@@ -95,7 +95,7 @@ public class AccountControllerTest {
 
   @Test
   public void testGetAllAccounts_getAccount_thenReturnJson() throws Exception {
-    log.info("trying to get all accounts for test:{}");
+    log.info("trying to get all accounts test.");
     Set<Account> allAccounts = Stream.of(account).collect(Collectors.toSet()); //Creates Set<account>
 
     given(accountService.getAllAccounts(40)).willReturn(allAccounts); //For Example just get 40 size account. It can be 50,60.70...
@@ -121,7 +121,7 @@ public class AccountControllerTest {
 
   @Test
   public void testGetAccountById_thenReturnJson() throws Exception {
-    log.info("trying to get account bt accountId for test:{}");
+    log.info("trying to get account by accountId for test.");
 
     given(accountService.getAccountById(account.getAccountId())).willReturn(account);
 
@@ -132,6 +132,42 @@ public class AccountControllerTest {
     .andExpect(jsonPath("$.type",is(account.getType().toString())))
     .andExpect(jsonPath("$.balance",is(account.getBalance().intValue())))
     .andExpect(jsonPath("$.client.clientId",is(account.getClient().getClientId().intValue()))); //if you use just getClient(),you will get Json error. Use like this when you geeting Json object from any model.
+
+  }
+
+  @Test
+  public void testSaveAccount_thenReturnJson() throws Exception {
+    log.info("trying to save account test:{}."+ account);
+    given(accountService.saveAccount(account)).willReturn(account);
+    String validAccountJson = "{\"accountId\":\"" + ACCOUNT_ID
+        + "\",\"balance\":\"" + new BigDecimal(1000)
+        + "\",\"balanceStatus\":\"" + BalanceStatus.CR
+        + "\",\"client\":" + "{\"clientId\":\"" + account.getClient().getClientId()
+                             + "\",\"firstName\":\"" + account.getClient().getFirstName()
+                             + "\",\"lastName\":\"" + account.getClient().getLastName()
+                             + "\",\"primaryAddress\":" + "{\"addressId\":\"" + account.getClient().getPrimaryAddress().getAddressId()
+                                                          +  "\",\"addressLine1\":\"" + account.getClient().getPrimaryAddress().getAddressLine1()
+                                                          +  "\",\"addressLine2\":\"" + account.getClient().getPrimaryAddress().getAddressLine2()
+                                                          +  "\",\"city\":\"" + account.getClient().getPrimaryAddress().getCity()
+                                                          +  "\",\"country\":\"" + account.getClient().getPrimaryAddress().getCountry()+"\"}"
+                             + ",\"secondaryAddress\":" + "{\"addressId\":\"" + account.getClient().getSecondaryAddress().getAddressId()
+                                                          +  "\",\"addressLine1\":\"" + account.getClient().getSecondaryAddress().getAddressLine1()
+                                                          +  "\",\"addressLine2\":\"" + account.getClient().getSecondaryAddress().getAddressLine2()
+                                                          +  "\",\"city\":\"" + account.getClient().getSecondaryAddress().getCity()
+                                                          +  "\",\"country\":\"" + account.getClient().getSecondaryAddress().getCountry()+"\"}"+"}"
+        + ",\"type\":\"" + Type.CURRENT+"\"}";
+
+    log.info("jhgsdyhgdwegtwsdysdwybxyswx6xsw6xwf:{}",validAccountJson);
+    mockMvc.perform(post("/saveAccount").content(validAccountJson).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.accountId",is(account.getAccountId().intValue())))
+        .andExpect(jsonPath("$.balanceStatus",is(account.getBalanceStatus().toString())))
+        .andExpect(jsonPath("$.type",is(account.getType().toString())))
+        .andExpect(jsonPath("$.balance",is(account.getBalance().intValue())))
+        .andExpect(jsonPath("$.client.clientId",is(account.getClient().getClientId().intValue())));
+
+//mockMvc.perform(post("/saveAccount").contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(validAccountJson))).andDo(print())
+
 
   }
 
