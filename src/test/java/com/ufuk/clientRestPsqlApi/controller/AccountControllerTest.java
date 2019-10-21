@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc //Annotation that can be applied to a test class to enable and configure auto-configuration of MockMvc.
-public class TransactionControllerTest {
+public class AccountControllerTest {
 
   //For Address model(primary address)
   public static final Long P_ADDRESSES_ID = Long.valueOf("1");
@@ -94,14 +94,13 @@ public class TransactionControllerTest {
 
 
   @Test
-  public void testGetAllAccounts_getAccount_thenReturnJson() throws Exception{
-
+  public void testGetAllAccounts_getAccount_thenReturnJson() throws Exception {
+    log.info("trying to get all accounts for test:{}");
     Set<Account> allAccounts = Stream.of(account).collect(Collectors.toSet()); //Creates Set<account>
 
     given(accountService.getAllAccounts(40)).willReturn(allAccounts); //For Example just get 40 size account. It can be 50,60.70...
 
     log.info("all accounts for test:{}",allAccounts);
-    log.info("FFFFFFFFFF:{}",account.getAccountId());
 
     /**
      * To test size of array: "jsonPath("$", hasSize(4))"  4 is just for example.
@@ -115,6 +114,24 @@ public class TransactionControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(1)))
         .andExpect(jsonPath("$[0].accountId",is(account.getAccountId().intValue())));
+
+    log.info("successfully tested to get all accounts.");
+
+  }
+
+  @Test
+  public void testGetAccountById_thenReturnJson() throws Exception {
+    log.info("trying to get account bt accountId for test:{}");
+
+    given(accountService.getAccountById(account.getAccountId())).willReturn(account);
+
+    mockMvc.perform(post("/getAccountById/" + account.getAccountId().toString()).contentType(MediaType.APPLICATION_JSON))
+    .andExpect(status().isOk())
+    .andExpect(jsonPath("$.accountId",is(account.getAccountId().intValue())))
+    .andExpect(jsonPath("$.balanceStatus",is(account.getBalanceStatus().toString())))
+    .andExpect(jsonPath("$.type",is(account.getType().toString())))
+    .andExpect(jsonPath("$.balance",is(account.getBalance().intValue())))
+    .andExpect(jsonPath("$.client.clientId",is(account.getClient().getClientId().intValue()))); //if you use just getClient(),you will get Json error. Use like this when you geeting Json object from any model.
 
   }
 
