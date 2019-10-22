@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +24,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -40,29 +42,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc //Annotation that can be applied to a test class to enable and configure auto-configuration of MockMvc.
 public class AccountControllerTest {
 
-  //For Address model(primary address)
-  public static final Long P_ADDRESSES_ID = Long.valueOf("1");
-  public static final String P_ADDRESS_LINE1 = "62 David Rd.";
-  public static final String P_ADDRESS_LINE2 = "Coventry";
-  public static final String P_CITY = "Birmingham";
-  public static final String P_COUNTRY = "United Kingdom";
-
-  //For Address model(secondary address)
-  public static final Long S_ADDRESSES_ID = Long.valueOf("2");
-  public static final String S_ADDRESS_LINE1 = "Gülveren St.";
-  public static final String S_ADDRESS_LINE2 = "Hürriyet Cd.";
-  public static final String S_CITY = "Antalya";
-  public static final String S_COUNTRY = "Turkey";
-
-  //For Client model
-  public static final Long CLIENT_ID = Long.valueOf("2");
-  public static final String FIRST_NAME = "Ufuk Atakan";
-  public static final String LAST_NAME = "Yüksel";
-
-  //For Account model
-  public static final Long ACCOUNT_ID = Long.valueOf("3");
-
-
 
   @Autowired
   private MockMvc mockMvc;
@@ -71,16 +50,28 @@ public class AccountControllerTest {
   private AccountService accountService;
 
 
-  private Client client;
-  private Account account;
+ /* private Client client;
+  private Account account;*/
+
+  private Client client = new Client();
+  private Account account = new Account();
 
   @Before
   public void before() {
 
-    client = new Client(CLIENT_ID, FIRST_NAME, LAST_NAME,
-        new Adresses(P_ADDRESSES_ID, P_ADDRESS_LINE1, P_ADDRESS_LINE2, P_CITY, P_COUNTRY),
-        new Adresses(S_ADDRESSES_ID, S_ADDRESS_LINE1, S_ADDRESS_LINE2, S_CITY, S_COUNTRY));
-    account = new Account(ACCOUNT_ID, BalanceStatus.CR, Type.CURRENT, new BigDecimal(1000),client);
+
+    client.setClientId((long) 2);
+    client.setFirstName("Ufuk Atakan");
+    client.setLastName("Yüksel");
+    client.setPrimaryAddress(new Adresses((long)1,"62 David Rd.","Coventry","Birmingham","United Kingdom"));
+    client.setSecondaryAddress(new Adresses((long)2,"Gülveren St.","Hürriyet Cd.","Antalya","Turkey"));
+
+    account.setAccountId((long)2);
+    account.setBalanceStatus(BalanceStatus.CR);
+    account.setType(Type.CURRENT);
+    account.setBalance(new BigDecimal(1000));
+    account.setClient(client);
+
 
   }
 
@@ -138,8 +129,8 @@ public class AccountControllerTest {
   @Test
   public void testSaveAccount_thenReturnJson() throws Exception {
     log.info("trying to save account test:{}."+ account);
-    given(accountService.saveAccount(account)).willReturn(account);
-    String validAccountJson = "{\"accountId\":\"" + ACCOUNT_ID
+    given(accountService.saveAccount(Mockito.any(Account.class))).willReturn(account);
+    String validAccountJson = "{\"accountId\":\"" + account.getAccountId()
         + "\",\"balance\":\"" + new BigDecimal(1000)
         + "\",\"balanceStatus\":\"" + BalanceStatus.CR
         + "\",\"client\":" + "{\"clientId\":\"" + account.getClient().getClientId()
