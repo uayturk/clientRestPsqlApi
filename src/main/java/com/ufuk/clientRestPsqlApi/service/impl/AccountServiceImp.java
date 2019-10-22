@@ -137,14 +137,14 @@ public class AccountServiceImp implements AccountService {
        * If balanceStatus is Debit(DR),account with a debit balance will be increased by a debit operation(DR) and decreased by a credit operation(CR).
        */
         else if(updatedAccount.getBalanceStatus().equals(BalanceStatus.DR)){
-        log.info("Debit(DR) Balace Status  account.");
+        log.info("Debit(DR) Balace Status  account:{}",updatedAccount);
         BigDecimal transactionAmount = (isCredit) ? new BigDecimal(amount).abs().negate() : new BigDecimal(amount).abs();//Debit BalaceStatus Account: if credit operation,amount decrease,if debit operation,amount increase.
 
         //checking that there is enough funds on account for transaction
         check(account, amount, isCredit, updatedAccount, transactionAmount);
         if(updatedAccount.getBalance().signum()<0){ //use signum() method Bigdecimal types.
            updatedAccount.setBalanceStatus(BalanceStatus.CR); //Debit Statsu accounts can shift from DR to CR if balance gone negative.
-          updatedAccount.setBalance(updatedAccount.getBalance().negate()); //We should set negative balance to positive one. Moving to a negative balance changes DR situation to the CR,
+           updatedAccount.setBalance(updatedAccount.getBalance().negate()); //We should set negative balance to positive one. Moving to a negative balance changes DR situation to the CR,
                                                                            //But balance must be still positive because same transactions will happens for changed situation CR.
         }
       }
@@ -177,7 +177,7 @@ public class AccountServiceImp implements AccountService {
 
   private void check(Account account, String amount, Boolean isCredit, Account updatedAccount, BigDecimal transactionAmount)
       throws AccountException {
-    Boolean condition = (isCredit || (account.getBalance().compareTo(transactionAmount.abs()) >= 0) );
+    Boolean condition = (isCredit || (updatedAccount.getBalance().compareTo(transactionAmount.abs()) >= 0) );
     validator.isTrue(condition, String.format(ErrorMessage.NOT_ENOUGH_FUNDS,account.getAccountId(),amount), ErrorCode.BadRequest.getCode());
     updatedAccount.setBalance(updatedAccount.getBalance().add(transactionAmount));
   }

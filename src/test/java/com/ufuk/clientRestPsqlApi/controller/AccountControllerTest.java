@@ -148,7 +148,6 @@ public class AccountControllerTest {
                                                           +  "\",\"country\":\"" + account.getClient().getSecondaryAddress().getCountry()+"\"}"+"}"
         + ",\"type\":\"" + Type.CURRENT+"\"}";
 
-    log.info("jhgsdyhgdwegtwsdysdwybxyswx6xsw6xwf:{}",validAccountJson);
     mockMvc.perform(post("/saveAccount").content(validAccountJson).contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.accountId",is(account.getAccountId().intValue())))
@@ -157,8 +156,13 @@ public class AccountControllerTest {
         .andExpect(jsonPath("$.balance",is(account.getBalance().intValue())))
         .andExpect(jsonPath("$.client.clientId",is(account.getClient().getClientId().intValue())));
 
-//mockMvc.perform(post("/saveAccount").contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(validAccountJson))).andDo(print())
 
+
+  }
+
+  @Test
+  public void testupdateAccount_thenReturnJson() throws Exception {
+    log.info("trying to update account test:{}."+ account);
 
   }
 
