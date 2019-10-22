@@ -26,13 +26,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,7 +55,6 @@ public class AccountControllerTest {
 
   @Before
   public void before() {
-
 
     client.setClientId((long) 2);
     client.setFirstName("Ufuk Atakan");
@@ -89,7 +85,7 @@ public class AccountControllerTest {
     log.info("trying to get all accounts test.");
     Set<Account> allAccounts = Stream.of(account).collect(Collectors.toSet()); //Creates Set<account>
 
-    given(accountService.getAllAccounts(40)).willReturn(allAccounts); //For Example just get 40 size account. It can be 50,60.70...
+    given(accountService.getAllAccounts(Mockito.any())).willReturn(allAccounts); //For Example just get 40 size account. It can be 50,60.70...
 
     log.info("all accounts for test:{}",allAccounts);
 
@@ -101,12 +97,12 @@ public class AccountControllerTest {
      * For the see response as string we can use : .andReturn().getResponse().getContentAsString()
      */
     log.info("response as string type:{}",mockMvc.perform(post("/getAllAccounts?size=40").contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse().getContentAsString());
-    mockMvc.perform(post("/getAllAccounts?size=40").contentType(MediaType.APPLICATION_JSON))
+    mockMvc.perform(post("/getAllAccounts").contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(1)))
         .andExpect(jsonPath("$[0].accountId",is(account.getAccountId().intValue())));
 
-    log.info("successfully tested to get all accounts.");
+    log.info("successfully tested getAllAccounts controller.");
 
   }
 
@@ -124,15 +120,16 @@ public class AccountControllerTest {
     .andExpect(jsonPath("$.balance",is(account.getBalance().intValue())))
     .andExpect(jsonPath("$.client.clientId",is(account.getClient().getClientId().intValue()))); //if you use just getClient(),you will get Json error. Use like this when you geeting Json object from any model.
 
+    log.info("successfully tested getAccountById controller.");
   }
 
   @Test
   public void testSaveAccount_thenReturnJson() throws Exception {
-    log.info("trying to save account test:{}."+ account);
+    log.info("trying to save account test:"+ account);
     given(accountService.saveAccount(Mockito.any(Account.class))).willReturn(account);
     String validAccountJson = "{\"accountId\":\"" + account.getAccountId()
-        + "\",\"balance\":\"" + new BigDecimal(1000)
-        + "\",\"balanceStatus\":\"" + BalanceStatus.CR
+        + "\",\"balance\":\"" + account.getBalance()
+        + "\",\"balanceStatus\":\"" + account.getBalanceStatus()
         + "\",\"client\":" + "{\"clientId\":\"" + account.getClient().getClientId()
                              + "\",\"firstName\":\"" + account.getClient().getFirstName()
                              + "\",\"lastName\":\"" + account.getClient().getLastName()
@@ -146,7 +143,7 @@ public class AccountControllerTest {
                                                           +  "\",\"addressLine2\":\"" + account.getClient().getSecondaryAddress().getAddressLine2()
                                                           +  "\",\"city\":\"" + account.getClient().getSecondaryAddress().getCity()
                                                           +  "\",\"country\":\"" + account.getClient().getSecondaryAddress().getCountry()+"\"}"+"}"
-        + ",\"type\":\"" + Type.CURRENT+"\"}";
+        + ",\"type\":\"" + account.getType()+"\"}";
 
     mockMvc.perform(post("/saveAccount").content(validAccountJson).contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
@@ -156,13 +153,43 @@ public class AccountControllerTest {
         .andExpect(jsonPath("$.balance",is(account.getBalance().intValue())))
         .andExpect(jsonPath("$.client.clientId",is(account.getClient().getClientId().intValue())));
 
-
+    log.info("successfully tested to saveAccount controller.");
 
   }
 
   @Test
   public void testupdateAccount_thenReturnJson() throws Exception {
-    log.info("trying to update account test:{}."+ account);
+    log.info("trying to update account test:"+ account);
+    Boolean isCredit = true;
+    String amount = "500";   //TODO check Mockito.eq(amount),Mockito.eq(isCredit)) !!!
+    given(accountService.updateAccount(Mockito.any(Account.class),Mockito.eq(amount),Mockito.eq(isCredit))).willReturn(account);
+    String validAccountJson = "{\"accountId\":\"" + account.getAccountId()
+        + "\",\"balance\":\"" + account.getBalance()
+        + "\",\"balanceStatus\":\"" + account.getBalanceStatus()
+        + "\",\"client\":" + "{\"clientId\":\"" + account.getClient().getClientId()
+                                 + "\",\"firstName\":\"" + account.getClient().getFirstName()
+                                 + "\",\"lastName\":\"" + account.getClient().getLastName()
+                                  + "\",\"primaryAddress\":" + "{\"addressId\":\"" + account.getClient().getPrimaryAddress().getAddressId()
+                                                    +  "\",\"addressLine1\":\"" + account.getClient().getPrimaryAddress().getAddressLine1()
+                                                    +  "\",\"addressLine2\":\"" + account.getClient().getPrimaryAddress().getAddressLine2()
+                                                    +  "\",\"city\":\"" + account.getClient().getPrimaryAddress().getCity()
+                                                    +  "\",\"country\":\"" + account.getClient().getPrimaryAddress().getCountry()+"\"}"
+                                  + ",\"secondaryAddress\":" + "{\"addressId\":\"" + account.getClient().getSecondaryAddress().getAddressId()
+                                                    +  "\",\"addressLine1\":\"" + account.getClient().getSecondaryAddress().getAddressLine1()
+                                                    +  "\",\"addressLine2\":\"" + account.getClient().getSecondaryAddress().getAddressLine2()
+                                                    +  "\",\"city\":\"" + account.getClient().getSecondaryAddress().getCity()
+                                                    +  "\",\"country\":\"" + account.getClient().getSecondaryAddress().getCountry()+"\"}"+"}"
+        + ",\"type\":\"" + account.getType()+"\"}";
+
+    mockMvc.perform(post("/updateAccount").content(validAccountJson).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.accountId",is(account.getAccountId().intValue())))
+        .andExpect(jsonPath("$.balanceStatus",is(account.getBalanceStatus().toString())))
+        .andExpect(jsonPath("$.type",is(account.getType().toString())))
+        .andExpect(jsonPath("$.balance",is(account.getBalance().intValue())))
+        .andExpect(jsonPath("$.client.clientId",is(account.getClient().getClientId().intValue())));
+
+    log.info("successfully tested to updateAccount controller.");
 
   }
 
