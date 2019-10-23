@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +27,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.hasSize;
@@ -85,7 +87,7 @@ public class AccountControllerTest {
     log.info("trying to get all accounts test.");
     Set<Account> allAccounts = Stream.of(account).collect(Collectors.toSet()); //Creates Set<account>
 
-    given(accountService.getAllAccounts(Mockito.any())).willReturn(allAccounts); //For Example just get 40 size account. It can be 50,60.70...
+    given(accountService.getAllAccounts(Mockito.anyInt())).willReturn(allAccounts); //For Example just get 40 size account. It can be 50,60.70...
 
     log.info("all accounts for test:{}",allAccounts);
 
@@ -97,7 +99,7 @@ public class AccountControllerTest {
      * For the see response as string we can use : .andReturn().getResponse().getContentAsString()
      */
     log.info("response as string type:{}",mockMvc.perform(post("/getAllAccounts?size=40").contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse().getContentAsString());
-    mockMvc.perform(post("/getAllAccounts").contentType(MediaType.APPLICATION_JSON))
+    mockMvc.perform(post("/getAllAccounts?size=40").contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(1)))
         .andExpect(jsonPath("$[0].accountId",is(account.getAccountId().intValue())));
@@ -112,7 +114,7 @@ public class AccountControllerTest {
 
     given(accountService.getAccountById(account.getAccountId())).willReturn(account);
 
-    mockMvc.perform(post("/getAccountById/" + account.getAccountId().toString()).contentType(MediaType.APPLICATION_JSON))
+    mockMvc.perform(post("/getAccountById/" + account.getAccountId()).contentType(MediaType.APPLICATION_JSON))
     .andExpect(status().isOk())
     .andExpect(jsonPath("$.accountId",is(account.getAccountId().intValue())))
     .andExpect(jsonPath("$.balanceStatus",is(account.getBalanceStatus().toString())))
@@ -158,11 +160,10 @@ public class AccountControllerTest {
   }
 
   @Test
-  public void testupdateAccount_thenReturnJson() throws Exception {
+  public void testUpdateAccount_thenReturnJson() throws Exception {
     log.info("trying to update account test:"+ account);
-    Boolean isCredit = true;
-    String amount = "500";   //TODO check Mockito.eq(amount),Mockito.eq(isCredit)) !!!
-    given(accountService.updateAccount(Mockito.any(Account.class),Mockito.eq(amount),Mockito.eq(isCredit))).willReturn(account);
+
+    given(accountService.updateAccount(Mockito.any(Account.class),Mockito.anyString(),Mockito.anyBoolean())).willReturn(account);
     String validAccountJson = "{\"accountId\":\"" + account.getAccountId()
         + "\",\"balance\":\"" + account.getBalance()
         + "\",\"balanceStatus\":\"" + account.getBalanceStatus()
@@ -180,8 +181,8 @@ public class AccountControllerTest {
                                                     +  "\",\"city\":\"" + account.getClient().getSecondaryAddress().getCity()
                                                     +  "\",\"country\":\"" + account.getClient().getSecondaryAddress().getCountry()+"\"}"+"}"
         + ",\"type\":\"" + account.getType()+"\"}";
-
-    mockMvc.perform(post("/updateAccount").content(validAccountJson).contentType(MediaType.APPLICATION_JSON))
+    //For ex. amount = 500 , isCredit=true
+    mockMvc.perform(post("/updateAccount?amount=500&isCredit=true").content(validAccountJson).contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.accountId",is(account.getAccountId().intValue())))
         .andExpect(jsonPath("$.balanceStatus",is(account.getBalanceStatus().toString())))
@@ -191,6 +192,25 @@ public class AccountControllerTest {
 
     log.info("successfully tested to updateAccount controller.");
 
+  }
+
+
+  //TODO test which is below needs to solve errors. Please keep check.
+  @Test
+  public void testDeleteAccountById_thenReturnJson() throws Exception {
+    log.info("trying to delete account by Id test:" + account);
+
+    doNothing().when(accountService).deleteAccountById(account.getAccountId());
+
+    mockMvc.perform(post("/deleteAccountById/" + account.getAccountId()).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.accountId",is(account.getAccountId().intValue())))
+        .andExpect(jsonPath("$.balanceStatus",is(account.getBalanceStatus().toString())))
+        .andExpect(jsonPath("$.type",is(account.getType().toString())))
+        .andExpect(jsonPath("$.balance",is(account.getBalance().intValue())))
+        .andExpect(jsonPath("$.client.clientId",is(account.getClient().getClientId().intValue()))); //if you use just getClient(),you will get Json error. Use like this when you geeting Json object from any model.
+
+    log.info("successfully tested getAccountById controller.");
   }
 
 

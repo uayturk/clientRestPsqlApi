@@ -136,7 +136,7 @@ public class AccountServiceImp implements AccountService {
       /**
        * If balanceStatus is Debit(DR),account with a debit balance will be increased by a debit operation(DR) and decreased by a credit operation(CR).
        */
-        else if(updatedAccount.getBalanceStatus().equals(BalanceStatus.DR)){
+      else if(updatedAccount.getBalanceStatus().equals(BalanceStatus.DR)){
         log.info("Debit(DR) Balace Status  account:{}",updatedAccount);
         BigDecimal transactionAmount = (isCredit) ? new BigDecimal(amount).abs().negate() : new BigDecimal(amount).abs();//Debit BalaceStatus Account: if credit operation,amount decrease,if debit operation,amount increase.
 
