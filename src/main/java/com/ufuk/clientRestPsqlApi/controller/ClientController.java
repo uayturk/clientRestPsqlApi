@@ -78,8 +78,8 @@ public class ClientController {
   @ApiOperation(value = "Necessary doc is the below for saveClient.\n",
       notes = "deleteClientById is deletes clients from PostgresqlDB.\n "
   )
-  public void deleteClientById(@PathVariable("clientId") Long clientId) throws IOException, JSONException {
-    clientService.deleteClientById(clientId);
+  public Client deleteClientById(@PathVariable("clientId") Long clientId) throws IOException, JSONException {
+    return clientService.deleteClientById(clientId);
   }
 
 

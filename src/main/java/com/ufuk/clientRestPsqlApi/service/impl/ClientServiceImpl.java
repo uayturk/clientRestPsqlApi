@@ -97,7 +97,7 @@ public class ClientServiceImpl implements ClientService {
   }
 
   @Override
-  public void deleteClientById(Long clientId) throws RecordNotFoundException {
+  public Client deleteClientById(Long clientId) throws RecordNotFoundException {
 
     log.info("trying to delete client for clientId: {}", clientId);
 
@@ -106,6 +106,7 @@ public class ClientServiceImpl implements ClientService {
     if(clientOptional.isPresent()) {
       clientRepository.deleteById(clientId);
       log.info("successfully to deleted client for clientId: {}", clientId);
+      return clientOptional.get();
     } else {
       throw new RecordNotFoundException("No employee record exist for given id");
     }

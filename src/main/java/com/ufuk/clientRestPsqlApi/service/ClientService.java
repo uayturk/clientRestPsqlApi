@@ -22,6 +22,6 @@ public interface ClientService {
 
   //Client updateClient(Client client) throws RecordNotFoundException; //update
 
-  void deleteClientById(Long clientId) throws RecordNotFoundException; //delete
+  Client deleteClientById(Long clientId) throws RecordNotFoundException; //delete
 
 }

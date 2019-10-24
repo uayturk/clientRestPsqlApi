@@ -152,18 +152,18 @@ public class AccountControllerTest {
         + "\",\"balance\":\"" + account.getBalance()
         + "\",\"balanceStatus\":\"" + account.getBalanceStatus()
         + "\",\"client\":" + "{\"clientId\":\"" + account.getClient().getClientId()
-                             + "\",\"firstName\":\"" + account.getClient().getFirstName()
-                             + "\",\"lastName\":\"" + account.getClient().getLastName()
-                             + "\",\"primaryAddress\":" + "{\"addressId\":\"" + account.getClient().getPrimaryAddress().getAddressId()
-                                                          +  "\",\"addressLine1\":\"" + account.getClient().getPrimaryAddress().getAddressLine1()
-                                                          +  "\",\"addressLine2\":\"" + account.getClient().getPrimaryAddress().getAddressLine2()
-                                                          +  "\",\"city\":\"" + account.getClient().getPrimaryAddress().getCity()
-                                                          +  "\",\"country\":\"" + account.getClient().getPrimaryAddress().getCountry()+"\"}"
-                             + ",\"secondaryAddress\":" + "{\"addressId\":\"" + account.getClient().getSecondaryAddress().getAddressId()
-                                                          +  "\",\"addressLine1\":\"" + account.getClient().getSecondaryAddress().getAddressLine1()
-                                                          +  "\",\"addressLine2\":\"" + account.getClient().getSecondaryAddress().getAddressLine2()
-                                                          +  "\",\"city\":\"" + account.getClient().getSecondaryAddress().getCity()
-                                                          +  "\",\"country\":\"" + account.getClient().getSecondaryAddress().getCountry()+"\"}"+"}"
+                         + "\",\"firstName\":\"" + account.getClient().getFirstName()
+                         + "\",\"lastName\":\"" + account.getClient().getLastName()
+                         + "\",\"primaryAddress\":" + "{\"addressId\":\"" + account.getClient().getPrimaryAddress().getAddressId()
+                                                 +  "\",\"addressLine1\":\"" + account.getClient().getPrimaryAddress().getAddressLine1()
+                                                 +  "\",\"addressLine2\":\"" + account.getClient().getPrimaryAddress().getAddressLine2()
+                                                 +  "\",\"city\":\"" + account.getClient().getPrimaryAddress().getCity()
+                                                 +  "\",\"country\":\"" + account.getClient().getPrimaryAddress().getCountry()+"\"}"
+                         + ",\"secondaryAddress\":" + "{\"addressId\":\"" + account.getClient().getSecondaryAddress().getAddressId()
+                                                 +  "\",\"addressLine1\":\"" + account.getClient().getSecondaryAddress().getAddressLine1()
+                                                 +  "\",\"addressLine2\":\"" + account.getClient().getSecondaryAddress().getAddressLine2()
+                                                 +  "\",\"city\":\"" + account.getClient().getSecondaryAddress().getCity()
+                                                 +  "\",\"country\":\"" + account.getClient().getSecondaryAddress().getCountry()+"\"}"+"}"
         + ",\"type\":\"" + account.getType()+"\"}";
 
     mockMvc.perform(post("/saveAccount").content(validAccountJson).contentType(MediaType.APPLICATION_JSON))
@@ -174,7 +174,7 @@ public class AccountControllerTest {
         .andExpect(jsonPath("$.balance",is(account.getBalance().intValue())))
         .andExpect(jsonPath("$.client.clientId",is(account.getClient().getClientId().intValue())));
 
-    log.info("successfully tested to saveAccount controller.");
+    log.info("successfully tested to saveClient controller.");
 
   }
 
