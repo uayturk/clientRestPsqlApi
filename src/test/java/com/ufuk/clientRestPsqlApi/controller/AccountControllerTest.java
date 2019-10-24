@@ -60,7 +60,7 @@ public class AccountControllerTest {
   @Before
   public void before() {
 
-    client.setClientId((long) 2);
+    client.setClientId((long)2);
     client.setFirstName("Ufuk Atakan");
     client.setLastName("Yüksel");
     client.setPrimaryAddress(new Adresses((long)1,"62 David Rd.","Coventry","Birmingham","United Kingdom"));
@@ -125,6 +125,23 @@ public class AccountControllerTest {
     .andExpect(jsonPath("$.client.clientId",is(account.getClient().getClientId().intValue()))); //if you use just getClient(),you will get Json error. Use like this when you geeting Json object from any model.
 
     log.info("successfully tested getAccountById controller.");
+  }
+
+  @Test
+  public void testGetAccountByClientId_thenReturnJson() throws Exception{
+    log.info("trying to get account by clientId for test.");
+
+    given(accountService.getAccountByClientId(client.getClientId())).willReturn(account);
+    //log.info("response as string type:{}", mockMvc.perform(post("/getAccountByClientId/" + client.getClientId()).contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse().getContentAsString());
+    mockMvc.perform(post("/getAccountByClientId/" + client.getClientId()).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.accountId",is(account.getAccountId().intValue())))
+        .andExpect(jsonPath("$.balanceStatus",is(account.getBalanceStatus().toString())))
+        .andExpect(jsonPath("$.type",is(account.getType().toString())))
+        .andExpect(jsonPath("$.balance",is(account.getBalance().intValue())))
+        .andExpect(jsonPath("$.client.clientId",is(account.getClient().getClientId().intValue())));
+
+    log.info("successfully tested getAccountByClientId controller.");
   }
 
   @Test
@@ -195,7 +212,6 @@ public class AccountControllerTest {
     log.info("successfully tested to updateAccount controller.");
 
   }
-
 
   @Test
   public void testDeleteAccountById_thenReturnJson() throws Exception {
