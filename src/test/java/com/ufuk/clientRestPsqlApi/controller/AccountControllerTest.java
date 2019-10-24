@@ -28,6 +28,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.hasSize;
@@ -195,12 +197,11 @@ public class AccountControllerTest {
   }
 
 
-  //TODO test which is below needs to solve errors. Please keep check.
   @Test
   public void testDeleteAccountById_thenReturnJson() throws Exception {
     log.info("trying to delete account by Id test:" + account);
 
-    doNothing().when(accountService).deleteAccountById(account.getAccountId());
+    given(accountService.deleteAccountById(account.getAccountId())).willReturn(account);
 
     mockMvc.perform(post("/deleteAccountById/" + account.getAccountId()).contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())

@@ -160,7 +160,7 @@ public class AccountServiceImp implements AccountService {
 
   @Transactional
   @Override
-  public void deleteAccountById(Long accountId) throws AccountException {
+  public Account deleteAccountById(Long accountId) throws AccountException {
 
     log.info("trying to delete account for accountId: {}", accountId);
 
@@ -169,6 +169,7 @@ public class AccountServiceImp implements AccountService {
     if(accountOptional.isPresent()) {
       accountRepository.deleteById(accountId);
       log.info("successfully to deleted client for accountId: {}", accountId);
+      return accountOptional.get();
     } else {
       throw new AccountException("No account exist for given id");
     }

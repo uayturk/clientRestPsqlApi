@@ -21,7 +21,7 @@ public interface AccountService {
 
   Account updateAccount(Account account, String amount, Boolean isCredit) throws AccountException; // update
 
-  void deleteAccountById(Long accountId) throws AccountException; // delete
+  Account deleteAccountById(Long accountId) throws AccountException; // delete
 
 
 

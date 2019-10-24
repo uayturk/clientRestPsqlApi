@@ -88,8 +88,8 @@ public class AccountController {
   @ApiOperation(value = "Necessary doc is the below for saveClient.\n",
       notes = "deleteAccountById is deletes accounts from PostgresqlDB.\n "
   )
-  public void deleteAccountById(@PathVariable("accountId") Long accountId) throws IOException, JSONException, AccountException {
-    accountService.deleteAccountById(accountId);
+  public Account deleteAccountById(@PathVariable("accountId") Long accountId) throws IOException, JSONException, AccountException {
+    return accountService.deleteAccountById(accountId);
   }
 
 }
