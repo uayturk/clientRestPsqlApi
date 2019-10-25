@@ -104,7 +104,7 @@ public class AccountControllerTest {
     mockMvc.perform(post("/getAllAccounts?size=40").contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(1)))
-        .andExpect(jsonPath("$[0].accountId",is(account.getAccountId().intValue())));
+        .andExpect(jsonPath("$[0].accountId",is(account.getAccountId().intValue()))); //if you using Set<> or List<> your jsonPath must like "$[0].xxxx",without Set or List :"$.xxxx"
 
     log.info("successfully tested getAllAccounts controller.");
 
