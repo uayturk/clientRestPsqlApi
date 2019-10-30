@@ -25,4 +25,4 @@ If you wanna change default configuration,parameters set in src/main/resources/a
 
 ***IDE***
 
-<br/>For this service we used smart IDE intellij and you can easily start our spring boot application from src/main/java/com.ufuk.clientRestPsqlApi/ClientRestPsqlApiApplication class.
+<br/>For this service we used smart IDE intellij and you can easily start our spring boot application from ```src/main/java/com.ufuk.clientRestPsqlApi/ClientRestPsqlApiApplication``` class.
