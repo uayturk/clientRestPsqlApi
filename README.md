@@ -5,7 +5,7 @@
 
 ***RUN***
 
-Firstly you should installation of postgres before the running our service, afterwards you need to package it with;
+Firstly,you should complete installation of postgres before the running our service, afterwards you need to package it with;
 
 ```mvn clean package```
 
