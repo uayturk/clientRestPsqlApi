@@ -1,7 +1,7 @@
 
 ***ASSESMENT***
 
-<br/>Transaction RESTful service Api with embedded apache tomcat as servlet container. Used Spring Boot as framework, PostgreSQL used as database.
+<br/>ClientRestPsqlApi is the transaction RESTful service Api with Spring Boot and PostgreSQL database. ClientRestPsqlApi is designed to manage transaction for Debit and Credit accounts. There is a clients has Credit and Debit accounts. ClientRestPsqlApi manages transactions and their account types. If any client make transaction over balance, client's account type change by system and over balance added to changed account type balance. If any client make transaction and client's balance is available, transaction change is applied to the balance and account type remains the same. Transations,account and client informations,accout type information are saved to the postgreSQL. ClientRestPsqlApi also allows the get accounts by using id and clientId. New accounts can be registered, update or delete existing accounts. About clients, you can get all clients or can get specific clients by using client Id specifically. New clients can be registered, update or delete existing clients. About transaction, you can get transaction by using account Id. saveTransaction method is save transactions which are completed.
 
 ***RUN***
 
